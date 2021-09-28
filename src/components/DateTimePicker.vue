@@ -8,8 +8,8 @@
     <a-input placeholder="Basic usage" />
     <span slot="icon" />
     <div class="wrapper" slot="title">
-      <div class="item" :id="date.id" ref="date" />
-      <div class="item" :id="time.id" ref="time" />
+      <div :id="date.id" ref="date" />
+      <div :id="time.id" ref="time" />
     </div>
   </a-popconfirm>
 </template>
