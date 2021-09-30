@@ -1,6 +1,9 @@
 <template>
   <div id="app">
-    <DateTimePicker @confirm="handleConfirm" />
+    <p>开始日期：{{start}}</p>
+    <p>结束日期：{{end}}</p>
+    <DateTimePicker v-model="start" />
+    <DateTimePicker v-model="end" />
   </div>
 </template>
 
@@ -12,10 +15,13 @@ export default {
   components: {
     DateTimePicker,
   },
-  methods: {
-    handleConfirm(dateTime) {
-      console.log(`handleConfirm: ${dateTime}`);
-    },
+
+  data(){
+    return {
+      start: null,
+      end: null
+    }
   },
+
 };
 </script>

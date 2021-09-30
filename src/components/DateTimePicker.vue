@@ -5,11 +5,11 @@
     @visibleChange="handlePopconfirmVisibleChange"
     @confirm="handlePopconfirmConfirm"
   >
-    <a-input placeholder="Basic usage" />
+    <a-input :placeholder="placeholder" v-model="value" />
     <span slot="icon" />
     <div class="wrapper" slot="title">
-      <div class="item" :id="date.id" ref="date" />
-      <div class="item" :id="time.id" ref="time" />
+      <div class="item" :id="date.id" />
+      <div class="item" :id="time.id" />
     </div>
   </a-popconfirm>
 </template>
@@ -18,28 +18,33 @@
 import laydate from 'layui-laydate';
 import dayjs from 'dayjs';
 import objectSupport from 'dayjs/plugin/objectSupport';
+
 import { customAlphabet } from 'nanoid';
 
 dayjs.extend(objectSupport);
 
 export default {
   name: 'DateTimePicker',
-
   props: {
-    // 初始值，可以是 String 或者 Date 对象
+    // v-model 绑定的值，可以是 String 或者 Date 对象
     value: {
       type: [String, Date],
-      default() {
-        return dayjs()
-          .startOf('date')
-          .toDate();
-      },
+      // default() {
+      //   return dayjs()
+      //     .startOf('date')
+      //     .format('YYYY-MM-DD HH:mm:ss');
+      // },
     },
     // confirm 事件参数值的格式化占位符
     // 注意，这里是 dayjs 里面的占位符标准，具体查看 https://dayjs.gitee.io/docs/zh-CN/display/format
     format: {
       type: String,
       default: 'YYYY-MM-DD HH:mm:ss',
+    },
+
+    placeholder: {
+      type: String,
+      default: '请选择日期时间',
     },
   },
 
@@ -68,9 +73,14 @@ export default {
 
   methods: {
     handlePopconfirmConfirm() {
-      this.$emit('confirm', this.getDateTime());
+      this.$emit('input', this.getDateTime());
     },
     handlePopconfirmVisibleChange(visible) {
+      if (!visible) {
+        this.handlePopconfirmConfirm();
+        return;
+      }
+
       if (this.isRender) {
         return;
       }
@@ -85,19 +95,29 @@ export default {
     getDateTime() {
       const { year, month, date } = this.date.value;
       const { hours, minutes, seconds } = this.time.value;
-      const datetime = { year, month, date, hours, minutes, seconds };
+      const datetime = {
+        year,
+        month: month - 1,
+        date,
+        hours,
+        minutes,
+        seconds,
+      };
 
       return dayjs(datetime).format(this.format);
     },
     renderLayDate(options) {
-      const value = dayjs(this.value)
-        .clone()
-        .toDate();
+      let initialValue;
+      if (this.value) {
+        initialValue = dayjs(this.value)
+          .clone()
+          .toDate();
+      }
 
-      laydate.render({
+      const a = laydate.render({
         elem: document.getElementById(options.id),
         type: options.type,
-        value: value,
+        value: initialValue,
         btns: ['now'],
         position: 'static',
         ready: (date) => {
