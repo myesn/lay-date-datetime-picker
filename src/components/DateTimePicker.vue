@@ -8,8 +8,8 @@
     <a-input :placeholder="placeholder" v-model="value" />
     <span slot="icon" />
     <div class="wrapper" slot="title">
-      <div class="item" :id="date.id" />
-      <div class="item" :id="time.id" />
+      <div :id="date.id" />
+      <div :id="time.id" />
     </div>
   </a-popconfirm>
 </template>
